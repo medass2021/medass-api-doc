@@ -69,12 +69,12 @@ paths:
                     description: |
                       * 0: OK
                       * 1000: 未登录
-                      * 1100: 密码错误
+                      * 1003: 密码错误
                       * 1500: 服务器错误
                     enum: [
                       0, # OK
                       1000, # 未登录
-                      1100, # 密码错误
+                      1003, # 密码错误
                       1500 # 服务器错误
                     ]
                   msg:
@@ -87,6 +87,7 @@ paths:
         - bearerAuth: []
       parameters:
         - name: hospital_name_like
+          description: 医院名模糊匹配
           in: query
           schema:
             type: string
@@ -95,24 +96,29 @@ paths:
           schema:
             type: string
         - name: sell_status
+          description: 1:未售出, 2:已售出
           in: query
           schema:
             type: integer
             format: int32
         - name: maintainer_like
+          description: 维护者姓名模糊匹配
           in: query
           schema:
             type: string
         - name: device_code_like
+          description: 设备号模糊匹配
           in: query
           schema:
             type: string
         - name: page
+          description: 从0开始, 不传默认是0
           in: query
           schema:
             type: integer
             format: int64
         - name: size
+          description: 不传或者传0时使用默认值20
           in: query
           schema:
             type: integer
@@ -150,7 +156,7 @@ paths:
                       list:
                         type: array
                         items:
-                          $ref: '#/components/schemas/BriefDevice'
+                          $ref: '#/components/schemas/DeviceInfo'
     post:
       description: 添加设备
       operationId: AddDevice
@@ -168,6 +174,7 @@ paths:
                   type: integer
                   format: int64
                 sell_status:
+                  description: 1:未售出, 2:已售出
                   type: integer
                   format: int32
                 maintainer:
@@ -228,6 +235,7 @@ paths:
                   type: integer
                   format: int64
                 sell_status:
+                  description: 1:未售出, 2:已售出
                   type: integer
                   format: int32
                 maintainer:
@@ -483,29 +491,33 @@ paths:
             type: integer
             format: int64
         - name: phone_like
+          description: 手机号码模糊匹配
           in: query
           schema:
             type: string
         - name: manager_name_like
+          description: 维护者姓名模糊匹配
           in: query
           schema:
             type: string
-        - name: register_time_range_begin
+        - name: time_range_begin
           in: query
           schema:
             type: integer
             format: int64
-        - name: register_time_range_end
+        - name: time_range_end
           in: query
           schema:
             type: integer
             format: int64
         - name: page
+          description: 从0开始, 不传默认是0
           in: query
           schema:
             type: integer
             format: int64
         - name: size
+          description: 不传或者传0时使用默认值20
           in: query
           schema:
             type: integer
@@ -540,10 +552,10 @@ paths:
                       total:
                         type: integer
                         format: int64
-                      List:
+                      list:
                         type: array
                         items:
-                          $ref: '#/components/schemas/BriefDepartment'
+                          $ref: '#/components/schemas/DepartmentInfo'
     post:
       description: 新增科室
       operationId: AddDepartment
@@ -674,7 +686,7 @@ components:
           type: string
         new_password:
           type: string
-    BriefDevice:
+    DeviceInfo:
       type: object
       properties:
         id:
@@ -687,6 +699,7 @@ components:
         department_name:
           type: string
         sell_status:
+          description: 1:未售出, 2:已售出
           type: integer
           format: int32
         maintainer_name:
@@ -700,10 +713,26 @@ components:
     DeviceSetting:
       type: object
       properties:
-        undecided:
-          description: 占位, 设备配置细节还没给
+        noninvasive_monitor:
+          $ref: '#/components/schemas/SingleSetting'
+        electrocardiograph:
+          $ref: '#/components/schemas/SingleSetting'
+        endoscope:
+          $ref: '#/components/schemas/SingleSetting'
+        ultrasound:
+          $ref: '#/components/schemas/SingleSetting'
+        infrared_thermometer:
+          $ref: '#/components/schemas/SingleSetting'
+    SingleSetting:
+      type: object
+      properties:
+        name:
+          description: WiFi ID 或者 蓝牙 ID
           type: string
-    BriefDepartment:
+        password:
+          description: 口令或密码
+          type: string
+    DepartmentInfo:
       type: object
       properties:
         id:
