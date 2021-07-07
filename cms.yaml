@@ -126,7 +126,7 @@ paths:
           schema:
             type: string
         - name: type
-          description: 未定, 等海啸发设备类型
+          description: 1:无创参数, 2:心电, 3:内窥镜, 4:B超, 5:红外测温
           in: query
           schema:
             type: integer
@@ -146,7 +146,7 @@ paths:
             type: integer
             format: int64
         - name: page
-          description: 从0开始
+          description: 从0开始, 不传默认是0
           in: query
           schema:
             type: integer
@@ -190,10 +190,10 @@ paths:
                       list:
                         type: array
                         items:
-                          $ref: '#/components/schemas/BriefReport'
+                          $ref: '#/components/schemas/ReportInfo'
   /api/v1/cms/reports/{reportID}:
     get:
-      description: 获取报告列表
+      description: 获取报告详情
       operationId: GetReport
       security:
         - bearerAuth: []
@@ -262,8 +262,26 @@ paths:
                         type: object
                         properties:
                           type:
+                            description: |
+                              1:无创参数, 2:心电, 3:内窥镜, 4:B超, 5:红外测温\
+                              请根据这个字段的枚举值从下面的5个字段中获取相应的报告详情
                             type: integer
                             format: int32
+                          noninvasive_monitor:
+                            # type=1 时有这个字段
+                            $ref: '#/components/schemas/ReportNoninvasiveMonitor'
+                          electrocardiograph:
+                            # type=2 时有这个字段
+                            $ref: '#/components/schemas/ReportElectrocardiograph'
+                          endoscope:
+                            # type=3 时有这个字段
+                            $ref: '#/components/schemas/ReportEndoscope'
+                          ultrasound:
+                            # type=4 时有这个字段
+                            $ref: '#/components/schemas/ReportUltrasound'
+                          infrared_thermometer:
+                            # type=5 时有这个字段
+                            $ref: '#/components/schemas/ReportInfraredThermometer'
                           created_at:
                             type: integer
                             format: int64
@@ -285,14 +303,17 @@ paths:
             type: integer
             format: int64
         - name: name_like
+          description: 姓名模糊匹配
           in: query
           schema:
             type: string
         - name: doctor_code_like
+          description: 工号模糊匹配
           in: query
           schema:
             type: string
         - name: phone_like
+          description: 手机号码模糊匹配
           in: query
           schema:
             type: string
@@ -334,7 +355,7 @@ paths:
                       total:
                         type: integer
                         format: int64
-                      List:
+                      list:
                         type: array
                         items:
                           $ref: '#/components/schemas/Doctor'
@@ -548,6 +569,7 @@ components:
         name:
           type: string
         doctor_code:
+          description: 医生工号
           type: string
         phone:
           type: string
@@ -558,7 +580,7 @@ components:
         created_at:
           type: integer
           format: int64
-    BriefReport:
+    ReportInfo:
       type: object
       properties:
         id:
@@ -567,11 +589,119 @@ components:
         patient_name:
           type: string
         type:
-          description: 枚举未定, 等海啸发设备类型
+          description: 1:无创参数, 2:心电, 3:内窥镜, 4:B超, 5:红外测温
           type: integer
           format: int32
         doctor_name:
           type: string
         created_at:
+          type: integer
+          format: int64
+    ReportNoninvasiveMonitor:
+      type: object
+      properties:
+        blood_oxygen_saturation:
+          description: 血氧饱和度
+          type: integer
+          format: int64
+        blood_pressure:
+          description: 血压
+          type: integer
+          format: int64
+        mean_arterial_pressure:
+          description: 平均动脉压
+          type: integer
+          format: int64
+        peripheral_arterial_pulse:
+          description: 外周脉搏
+          type: integer
+          format: int64
+        cardiac_output:
+          description: 心输出量
+          type: integer
+          format: int64
+        stroke_volume:
+          description: 心搏量
+          type: integer
+          format: int64
+        alkaline_acidity:
+          description: 碱酸度
+          type: integer
+          format: int64
+        partial_pressure_of_carbon_dioxide:
+          description: 二氧化碳分压
+          type: integer
+          format: int64
+        oxygen_partial_pressure:
+          description: 氧分压
+          type: integer
+          format: int64
+        oxygen_content:
+          description: 含氧量
+          type: integer
+          format: int64
+        total_carbon_dioxide:
+          description: 总二氧化碳量
+          type: integer
+          format: int64
+        hemoglobin:
+          description: 血红蛋白
+          type: integer
+          format: int64
+        packed_cell_volume:
+          description: 红细胞压积
+          type: integer
+          format: int64
+        red_blood_cell:
+          description: 红细胞
+          type: integer
+          format: int64
+    ReportElectrocardiograph:
+      type: object
+      properties:
+        heart_rate:
+          type: integer
+          format: int64
+        heartbeat:
+          type: integer
+          format: int64
+        Sequence:
+          description: 先想当然地这么写, 还是需要 PAD 端确认
+          type: array
+          items:
+            type: object
+            properties:
+              time_offset:
+                type: integer
+                format: int64
+              value:
+                type: integer
+                format: int64
+    ReportEndoscope:
+      type: object
+      properties:
+        video_url:
+          type: string
+        conclusion:
+          description: 诊断结果
+          type: string
+    ReportUltrasound:
+      type: object
+      properties:
+        image_url:
+          type: string
+    ReportInfraredThermometer:
+      type: object
+      properties:
+        lowest_inside_temperature:
+          type: integer
+          format: int64
+        highest_inside_temperature:
+          type: integer
+          format: int64
+        lowest_outside_temperature:
+          type: integer
+          format: int64
+        highest_outside_temperature:
           type: integer
           format: int64
