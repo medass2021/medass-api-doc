@@ -1,0 +1,121 @@
+openapi: "3.0.3"
+info:
+  version: 0.0.1
+  title: Pad 端接口
+servers:
+  - url: http://127.0.0.1:8080
+
+paths:
+  /api/v1/device/login:
+    post:
+      description: |
+        医生登录, 成功返回的 token 在请求后续需要认证的接口时使用, 使用方法:\
+        在需要认证的接口请求的 header 中加入 `Authorization: Bearer <token>`;\
+        后续需要认证的接口如果返回1000(未认证)错误，需要重新登录获取有效的 token.
+      operationId: Login
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1010: 非法输入
+                      * 1002: 登录失败
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1010, # 非法输入
+                      1002, # 登录失败
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/LoginResponse'
+  /api/v1/device/devices/{deviceCode}/setting:
+    get:
+      description: 获取配置
+      operationId: GetSetting
+      parameters:
+        - name: deviceCode
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1010: 非法输入
+                      * 1002: 登录失败
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1010, # 非法输入
+                      1002, # 登录失败
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/DeviceSetting'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+    DeviceSetting:
+      type: object
+      properties:
+        noninvasive_monitor:
+          $ref: '#/components/schemas/SingleSetting'
+        electrocardiograph:
+          $ref: '#/components/schemas/SingleSetting'
+        endoscope:
+          $ref: '#/components/schemas/SingleSetting'
+        ultrasound:
+          $ref: '#/components/schemas/SingleSetting'
+        infrared_thermometer:
+          $ref: '#/components/schemas/SingleSetting'
+    SingleSetting:
+      type: object
+      properties:
+        name:
+          description: WiFi ID 或者 蓝牙 ID
+          type: string
+        password:
+          description: 口令或密码
+          type: string
