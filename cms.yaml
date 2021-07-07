@@ -1,0 +1,577 @@
+openapi: "3.0.3"
+info:
+  version: 0.0.1
+  title: 佳医宝管理平台(医生使用)
+servers:
+  - url: http://127.0.0.1:8080
+
+paths:
+  /api/v1/cms/login:
+    post:
+      description: |
+        登录, 成功返回的 token 在请求后续需要认证的接口时使用, 使用方法:\
+        在需要认证的接口请求的 header 中加入 `Authorization: Bearer <token>`;\
+        后续需要认证的接口如果返回1000(未认证)错误，需要重新登录获取有效的 token.
+      operationId: Login
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1010: 非法输入
+                      * 1002: 登录失败
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1010, # 非法输入
+                      1002, # 登录失败
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/LoginResponse'
+  /api/v1/cms/password:
+    put:
+      description: 修改密码
+      operationId: ModifyPassword
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/ModifyPasswordRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1100: 密码错误
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1100, # 密码错误
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+  /api/v1/cms/me:
+    get:
+      description: 获取自己的用户信息
+      operationId: Me
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Doctor'
+  /api/v1/cms/reports:
+    get:
+      description: 获取报告列表
+      operationId: ListReports
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: patient_name
+          in: query
+          schema:
+            type: string
+        - name: type
+          description: 未定, 等海啸发设备类型
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: doctor_name
+          in: query
+          schema:
+            type: string
+        - name: time_range_begin
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: time_range_end
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          description: 从0开始
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: size
+          description: 不传或者传0时使用默认值20
+          in: query
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1010: 非法输入
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1010, # 非法输入
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        format: int64
+                      list:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/BriefReport'
+  /api/v1/cms/reports/{reportID}:
+    get:
+      description: 获取报告列表
+      operationId: GetReport
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: reportID
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1001: 无权限
+                      * 1010: 非法输入
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1001, # 无权限
+                      1010, # 非法输入
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                      patient:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          gender:
+                            description: 1:男性, 2:女性
+                            type: integer
+                            format: int32
+                          age:
+                            type: integer
+                            format: int32
+                      doctor:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          hospital_name:
+                            type: string
+                          department_name:
+                            type: string
+                      report:
+                        type: object
+                        properties:
+                          type:
+                            type: integer
+                            format: int32
+                          created_at:
+                            type: integer
+                            format: int64
+  /api/v1/cms/doctors:
+    get:
+      description: 获取医生列表
+      operationId: ListDoctors
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: time_range_begin
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: time_range_end
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: name_like
+          in: query
+          schema:
+            type: string
+        - name: doctor_code_like
+          in: query
+          schema:
+            type: string
+        - name: phone_like
+          in: query
+          schema:
+            type: string
+        - name: role
+          description: 角色, 1:部门管理员, 2:普通医生
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1001: 无权限
+                      * 1010: 非法输入
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1001, # 无权限
+                      1010, # 非法输入
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        format: int64
+                      List:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Doctor'
+    post:
+      description: 添加医生
+      operationId: AddDoctor
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                phone:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1001: 无权限
+                      * 1010: 非法输入
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1001, # 无权限
+                      1010, # 非法输入
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+  /api/v1/cms/doctors/{doctorID}:
+    put:
+      description: 更新医生信息
+      operationId: UpdateDoctor
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: doctorID
+          in: path
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                phone:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1001: 无权限
+                      * 1010: 非法输入
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1001, # 无权限
+                      1010, # 非法输入
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+    delete:
+      description: 删除医生
+      operationId: DeleteDoctor
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: doctorID
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1001: 无权限
+                      * 1010: 非法输入
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1001, # 无权限
+                      1010, # 非法输入
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+  /api/v1/cms/doctors/{doctorID}/password:
+    put:
+      description: 重置密码
+      operationId: ResetPassword
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: doctorID
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1001: 无权限
+                      * 1010: 非法输入
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1001, # 无权限
+                      1010, # 非法输入
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+    ModifyPasswordRequest:
+      type: object
+      properties:
+        old_password:
+          type: string
+        new_password:
+          type: string
+    Doctor:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        doctor_code:
+          type: string
+        phone:
+          type: string
+        role:
+          description: 角色, 1:部门管理员, 2:普通医生
+          type: integer
+          format: int32
+        created_at:
+          type: integer
+          format: int64
+    BriefReport:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        patient_name:
+          type: string
+        type:
+          description: 枚举未定, 等海啸发设备类型
+          type: integer
+          format: int32
+        doctor_name:
+          type: string
+        created_at:
+          type: integer
+          format: int64

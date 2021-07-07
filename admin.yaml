@@ -1,0 +1,722 @@
+openapi: "3.0.3"
+info:
+  version: 0.0.1
+  title: 佳医宝管理平台(运维者使用)
+servers:
+  - url: http://127.0.0.1:8080
+
+paths:
+  /api/v1/admin/login:
+    post:
+      description: |
+        登录, 成功返回的 token 在请求后续需要认证的接口时使用, 使用方法:\
+        在需要认证的接口请求的 header 中加入 `Authorization: Bearer <token>`;\
+        后续需要认证的接口如果返回1000(未认证)错误，需要重新登录获取有效的 token.
+      operationId: Login
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1010: 非法输入
+                      * 1002: 登录失败
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1010, # 非法输入
+                      1002, # 登录失败
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/LoginResponse'
+  /api/v1/admin/password:
+    put:
+      description: 修改密码
+      operationId: ModifyPassword
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/ModifyPasswordRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1100: 密码错误
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1100, # 密码错误
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+  /api/v1/admin/devices:
+    get:
+      description: 设备列表
+      operationId: ListDevices
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: hospital_name_like
+          in: query
+          schema:
+            type: string
+        - name: department_name
+          in: query
+          schema:
+            type: string
+        - name: sell_status
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: maintainer_like
+          in: query
+          schema:
+            type: string
+        - name: device_code_like
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: size
+          in: query
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1010: 非法输入
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1010, # 非法输入
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        format: int64
+                      List:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/BriefDevice'
+    post:
+      description: 添加设备
+      operationId: AddDevice
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              type: object
+              properties:
+                device_code:
+                  type: string
+                department_id:
+                  type: integer
+                  format: int64
+                sell_status:
+                  type: integer
+                  format: int32
+                maintainer:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1010: 非法输入
+                      * 1021: 设备ID已存在
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1010, # 非法输入
+                      1021, # 设备ID已存在
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+  /api/v1/admin/devices/{deviceID}:
+    put:
+      description: 更新设备信息
+      operationId: UpdateDevice
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: deviceID
+          in: path
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              type: object
+              properties:
+                device_code:
+                  type: string
+                department_id:
+                  type: integer
+                  format: int64
+                sell_status:
+                  type: integer
+                  format: int32
+                maintainer:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1010: 非法输入
+                      * 1020: 未找到
+                      * 1021: 设备ID已存在
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1010, # 非法输入
+                      1020, # 未找到
+                      1021, # 设备ID已存在
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+  /api/v1/admin/devices/{deviceID}/setting:
+    get:
+      description: 获取设备配置
+      operationId: GetDeviceSetting
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: deviceID
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1010: 非法输入
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1010, # 非法输入
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/DeviceSetting'
+    put:
+      description: 更新设备配置
+      operationId: UpdateDeviceSetting
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: deviceID
+          in: path
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/DeviceSetting'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1010: 非法输入
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1010, # 非法输入
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+  /api/v1/admin/hospitals:
+    get:
+      description: 所有医院列表
+      operationId: AllHospitals
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      List:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              format: int64
+                            name:
+                              type: string
+  /api/v1/admin/department_names:
+    get:
+      description: 所有科室名列表
+      operationId: AllDepartmentNames
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      List:
+                        type: array
+                        items:
+                          type: string
+  /api/v1/admin/hospitals/{hospitalID}/departments:
+    get:
+      description: 医院下所有科室列表
+      operationId: AllDepartmentsInHospital
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: hospitalID
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      List:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              format: int64
+                            name:
+                              type: string
+  /api/v1/admin/departments:
+    get:
+      description: 科室列表
+      operationId: ListDepartments
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: hospital_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: department_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: phone_like
+          in: query
+          schema:
+            type: string
+        - name: manager_name_like
+          in: query
+          schema:
+            type: string
+        - name: register_time_range_begin
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: register_time_range_end
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: size
+          in: query
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1010: 非法输入
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1010, # 非法输入
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        format: int64
+                      List:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/BriefDepartment'
+    post:
+      description: 新增科室
+      operationId: AddDepartment
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              type: object
+              properties:
+                hospital_id:
+                  type: integer
+                  format: int64
+                name:
+                  type: string
+                manager:
+                  type: string
+                phone:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1010: 非法输入
+                      * 1021: 该手机号已绑定其它科室
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1010, # 非法输入
+                      1021, # 该手机号已绑定其它科室
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+  /api/v1/admin/departments/{departmentID}:
+    put:
+      description: 更新科室
+      operationId: UpdateDepartment
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: departmentID
+          in: path
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              type: object
+              properties:
+                hospital_id:
+                  type: integer
+                  format: int64
+                name:
+                  type: string
+                manager:
+                  type: string
+                phone:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1010: 非法输入
+                      * 1021: 该手机号已绑定其它科室
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1010, # 非法输入
+                      1021, # 该手机号已绑定其它科室
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+    ModifyPasswordRequest:
+      type: object
+      properties:
+        old_password:
+          type: string
+        new_password:
+          type: string
+    BriefDevice:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        device_code:
+          type: string
+        hospital_name:
+          type: string
+        department_name:
+          type: string
+        sell_status:
+          type: integer
+          format: int32
+        maintainer_name:
+          type: string
+        created_at:
+          type: integer
+          format: int64
+        updated_at:
+          type: integer
+          format: int64
+    DeviceSetting:
+      type: object
+      properties:
+        undecided:
+          description: 占位, 设备配置细节还没给
+          type: string
+    BriefDepartment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        hospital_name:
+          type: string
+        manager_name:
+          type: string
+        phone:
+          type: string
+        created_at:
+          type: integer
+          format: int64
