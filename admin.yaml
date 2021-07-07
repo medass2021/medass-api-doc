@@ -147,7 +147,7 @@ paths:
                       total:
                         type: integer
                         format: int64
-                      List:
+                      list:
                         type: array
                         items:
                           $ref: '#/components/schemas/BriefDevice'
@@ -414,7 +414,7 @@ paths:
                   data:
                     type: object
                     properties:
-                      List:
+                      list:
                         type: array
                         items:
                           type: string
