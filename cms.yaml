@@ -594,6 +594,8 @@ components:
           format: int32
         doctor_name:
           type: string
+        hospital_name:
+          type: string
         created_at:
           type: integer
           format: int64
