@@ -48,6 +48,8 @@ paths:
     get:
       description: 获取配置
       operationId: GetSetting
+      security:
+        - bearerAuth: []
       parameters:
         - name: deviceCode
           in: path
@@ -79,6 +81,76 @@ paths:
                     type: string
                   data:
                     $ref: '#/components/schemas/DeviceSetting'
+  /api/v1/device/devices/{deviceCode}/reports:
+    post:
+      description: 上传检测报告
+      operationId: AddReport
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: deviceCode
+          in: path
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              type: object
+              properties:
+                type:
+                  description: 1:无创参数, 2:心电, 3:内窥镜, 4:B超, 5:红外测温
+                  type: integer
+                  format: int32
+                noninvasive_monitor:
+                  # 无创参数报告详情 (type = 1)
+                  $ref: '#/components/schemas/ReportNoninvasiveMonitor'
+                electrocardiograph:
+                  # 心电报告详情 (type = 2)
+                  $ref: '#/components/schemas/ReportElectrocardiograph'
+                endoscope:
+                  # 内窥镜报告详情 (type = 3)
+                  $ref: '#/components/schemas/ReportEndoscope'
+                ultrasound:
+                  # B超报告详情 (type = 4)
+                  $ref: '#/components/schemas/ReportUltrasound'
+                infrared_thermometer:
+                  # 红外测温报告详情(type = 5)
+                  $ref: '#/components/schemas/ReportInfraredThermometer'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1001: 无权限
+                      * 1010: 非法输入
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1001, # 无权限
+                      1010, # 非法输入
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
 components:
   securitySchemes:
     bearerAuth:
@@ -119,3 +191,111 @@ components:
         password:
           description: 口令或密码
           type: string
+    ReportNoninvasiveMonitor:
+      type: object
+      properties:
+        blood_oxygen_saturation:
+          description: 血氧饱和度
+          type: integer
+          format: int64
+        blood_pressure:
+          description: 血压
+          type: integer
+          format: int64
+        mean_arterial_pressure:
+          description: 平均动脉压
+          type: integer
+          format: int64
+        peripheral_arterial_pulse:
+          description: 外周脉搏
+          type: integer
+          format: int64
+        cardiac_output:
+          description: 心输出量
+          type: integer
+          format: int64
+        stroke_volume:
+          description: 心搏量
+          type: integer
+          format: int64
+        alkaline_acidity:
+          description: 碱酸度
+          type: integer
+          format: int64
+        partial_pressure_of_carbon_dioxide:
+          description: 二氧化碳分压
+          type: integer
+          format: int64
+        oxygen_partial_pressure:
+          description: 氧分压
+          type: integer
+          format: int64
+        oxygen_content:
+          description: 含氧量
+          type: integer
+          format: int64
+        total_carbon_dioxide:
+          description: 总二氧化碳量
+          type: integer
+          format: int64
+        hemoglobin:
+          description: 血红蛋白
+          type: integer
+          format: int64
+        packed_cell_volume:
+          description: 红细胞压积
+          type: integer
+          format: int64
+        red_blood_cell:
+          description: 红细胞
+          type: integer
+          format: int64
+    ReportElectrocardiograph:
+      type: object
+      properties:
+        heart_rate:
+          type: integer
+          format: int64
+        heartbeat:
+          type: integer
+          format: int64
+        Sequence:
+          description: 先想当然地这么写, 还是需要 PAD 端确认
+          type: array
+          items:
+            type: object
+            properties:
+              time_offset:
+                type: integer
+                format: int64
+              value:
+                type: integer
+                format: int64
+    ReportEndoscope:
+      type: object
+      properties:
+        video_url:
+          type: string
+        conclusion:
+          description: 诊断结果
+          type: string
+    ReportUltrasound:
+      type: object
+      properties:
+        image_url:
+          type: string
+    ReportInfraredThermometer:
+      type: object
+      properties:
+        lowest_inside_temperature:
+          type: integer
+          format: int64
+        highest_inside_temperature:
+          type: integer
+          format: int64
+        lowest_outside_temperature:
+          type: integer
+          format: int64
+        highest_outside_temperature:
+          type: integer
+          format: int64
