@@ -350,7 +350,7 @@ paths:
                     ]
                   msg:
                     type: string
-  /api/v1/admin/hospitals:
+  /api/v1/admin/all_hospitals:
     get:
       description: 所有医院列表
       operationId: AllHospitals
@@ -381,17 +381,11 @@ paths:
                   data:
                     type: object
                     properties:
-                      List:
+                      list:
                         type: array
                         items:
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                              format: int64
-                            name:
-                              type: string
-  /api/v1/admin/department_names:
+                          $ref: '#/components/schemas/Hospital'
+  /api/v1/admin/all_department_names:
     get:
       description: 所有科室名列表
       operationId: AllDepartmentNames
@@ -426,7 +420,7 @@ paths:
                         type: array
                         items:
                           type: string
-  /api/v1/admin/hospitals/{hospitalID}/departments:
+  /api/v1/admin/hospitals/{hospitalID}/all_departments:
     get:
       description: 医院下所有科室列表
       operationId: AllDepartmentsInHospital
@@ -466,17 +460,303 @@ paths:
                       List:
                         type: array
                         items:
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                              format: int64
-                            name:
-                              type: string
+                          $ref: '#/components/schemas/Department'
+  /api/v1/admin/hospitals:
+    get:
+      description: 所有医院列表
+      operationId: ListHospitals
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          description: 从0开始, 不传默认是0
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: size
+          description: 不传或者传0时使用默认值20
+          in: query
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1010: 非法输入
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1010, # 非法输入
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        format: int64
+                      list:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Hospital'
+    post:
+      description: 添加医院
+      operationId: AddHospital
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1010: 非法输入
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1010, # 非法输入
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+  /api/v1/admin/hospitals/{hospitalID}:
+    put:
+      description: 更新医院
+      operationId: UpdateHospital
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: hospitalID
+          in: path
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1010: 非法输入
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1010, # 非法输入
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
   /api/v1/admin/departments:
     get:
       description: 科室列表
       operationId: ListDepartments
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          description: 从0开始, 不传默认是0
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: size
+          description: 不传或者传0时使用默认值20
+          in: query
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1010: 非法输入
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1010, # 非法输入
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        format: int64
+                      list:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Department'
+    post:
+      description: 新增科室
+      operationId: AddDepartment
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              type: object
+              properties:
+                hospital_id:
+                  type: integer
+                  format: int64
+                name:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1010: 非法输入
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1010, # 非法输入
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+  /api/v1/admin/departments/{departmentID}:
+    put:
+      description: 更新科室
+      operationId: UpdateDepartment
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: departmentID
+          in: path
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              type: object
+              properties:
+                hospital_id:
+                  type: integer
+                  format: int64
+                name:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1010: 非法输入
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1010, # 非法输入
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+  /api/v1/admin/accounts:
+    get:
+      description: 账号列表
+      operationId: ListAccounts
       security:
         - bearerAuth: []
       parameters:
@@ -555,10 +835,23 @@ paths:
                       list:
                         type: array
                         items:
-                          $ref: '#/components/schemas/DepartmentInfo'
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              format: int64
+                            name:
+                              type: string
+                            phone:
+                              type: string
+                            department:
+                              $ref: '#/components/schemas/Department'
+                            created_at:
+                              type: integer
+                              format: int64
     post:
-      description: 新增科室
-      operationId: AddDepartment
+      description: 添加账号
+      operationId: AddAccount
       security:
         - bearerAuth: []
       requestBody:
@@ -567,15 +860,13 @@ paths:
             schema:
               type: object
               properties:
-                hospital_id:
-                  type: integer
-                  format: int64
-                name:
-                  type: string
-                manager:
-                  type: string
                 phone:
                   type: string
+                name:
+                  type: string
+                department_id:
+                  type: integer
+                  format: int64
       responses:
         '200':
           description: OK
@@ -591,13 +882,13 @@ paths:
                       * 0: OK
                       * 1000: 未登录
                       * 1010: 非法输入
-                      * 1021: 该手机号已绑定其它科室
+                      * 1020: 未找到
                       * 1500: 服务器错误
                     enum: [
                       0, # OK
                       1000, # 未登录
                       1010, # 非法输入
-                      1021, # 该手机号已绑定其它科室
+                      1020, # 未找到
                       1500 # 服务器错误
                     ]
                   msg:
@@ -608,14 +899,14 @@ paths:
                       id:
                         type: integer
                         format: int64
-  /api/v1/admin/departments/{departmentID}:
+  /api/v1/admin/accounts/{accountID}:
     put:
-      description: 更新科室
-      operationId: UpdateDepartment
+      description: 更新账号
+      operationId: UpdateAccount
       security:
         - bearerAuth: []
       parameters:
-        - name: departmentID
+        - name: accountID
           in: path
           schema:
             type: integer
@@ -626,15 +917,13 @@ paths:
             schema:
               type: object
               properties:
-                hospital_id:
-                  type: integer
-                  format: int64
-                name:
-                  type: string
-                manager:
-                  type: string
                 phone:
                   type: string
+                name:
+                  type: string
+                department_id:
+                  type: integer
+                  format: int64
       responses:
         '200':
           description: OK
@@ -650,13 +939,84 @@ paths:
                       * 0: OK
                       * 1000: 未登录
                       * 1010: 非法输入
-                      * 1021: 该手机号已绑定其它科室
+                      * 1020: 未找到
                       * 1500: 服务器错误
                     enum: [
                       0, # OK
                       1000, # 未登录
                       1010, # 非法输入
-                      1021, # 该手机号已绑定其它科室
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+    delete:
+      description: 删除账号
+      operationId: DeleteAccount
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: accountID
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+  /api/v1/admin/accounts/{accountID}/password:
+    put:
+      description: 重置账号密码
+      operationId: ResetAccountPassword
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: accountID
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1020, # 未找到
                       1500 # 服务器错误
                     ]
                   msg:
@@ -732,7 +1092,7 @@ components:
         password:
           description: 口令或密码
           type: string
-    DepartmentInfo:
+    Hospital:
       type: object
       properties:
         id:
@@ -740,12 +1100,13 @@ components:
           format: int64
         name:
           type: string
-        hospital_name:
-          type: string
-        manager_name:
-          type: string
-        phone:
-          type: string
-        created_at:
+    Department:
+      type: object
+      properties:
+        id:
           type: integer
           format: int64
+        name:
+          type: string
+        hospital:
+          $ref: '#/components/schemas/Hospital'
