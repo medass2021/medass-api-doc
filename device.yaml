@@ -99,7 +99,9 @@ paths:
               type: object
               properties:
                 type:
-                  description: 1:无创参数, 2:心电, 3:内窥镜, 4:B超, 5:红外测温
+                  description: |
+                    1:无创参数, 2:心电, 3:内窥镜, 4:B超, 5:红外测温\
+                    服务端会根据这个字段从下面五种报告详情中选取对应的报告详情
                   type: integer
                   format: int32
                 noninvasive_monitor:
