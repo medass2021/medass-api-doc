@@ -3,6 +3,7 @@ info:
   version: 0.0.1
   title: 佳医宝管理平台(医生使用)
 servers:
+  - url: http://118.195.174.27:8080
   - url: http://127.0.0.1:8080
 
 paths:
