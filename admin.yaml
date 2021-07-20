@@ -458,7 +458,7 @@ paths:
                   data:
                     type: object
                     properties:
-                      List:
+                      list:
                         type: array
                         items:
                           $ref: '#/components/schemas/Department'
