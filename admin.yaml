@@ -386,53 +386,12 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/Hospital'
-  /api/v1/admin/all_department_names:
+  /api/v1/admin/all_departments:
     get:
-      description: 所有科室名列表
-      operationId: AllDepartmentNames
+      description: 所有科室列表
+      operationId: AllDepartments
       security:
         - bearerAuth: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json; charset=utf-8:
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    format: int32
-                    description: |
-                      * 0: OK
-                      * 1000: 未登录
-                      * 1500: 服务器错误
-                    enum: [
-                      0, # OK
-                      1000, # 未登录
-                      1500 # 服务器错误
-                    ]
-                  msg:
-                    type: string
-                  data:
-                    type: object
-                    properties:
-                      list:
-                        type: array
-                        items:
-                          type: string
-  /api/v1/admin/hospitals/{hospitalID}/all_departments:
-    get:
-      description: 医院下所有科室列表
-      operationId: AllDepartmentsInHospital
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: hospitalID
-          in: path
-          schema:
-            type: integer
-            format: int64
       responses:
         '200':
           description: OK
@@ -668,9 +627,6 @@ paths:
             schema:
               type: object
               properties:
-                hospital_id:
-                  type: integer
-                  format: int64
                 name:
                   type: string
       responses:
@@ -723,9 +679,6 @@ paths:
             schema:
               type: object
               properties:
-                hospital_id:
-                  type: integer
-                  format: int64
                 name:
                   type: string
       responses:
@@ -845,6 +798,8 @@ paths:
                               type: string
                             phone:
                               type: string
+                            hospital:
+                              $ref: '#/components/schemas/Hospital'
                             department:
                               $ref: '#/components/schemas/Department'
                             created_at:
@@ -865,6 +820,9 @@ paths:
                   type: string
                 name:
                   type: string
+                hospital_id:
+                  type: integer
+                  format: int64
                 department_id:
                   type: integer
                   format: int64
@@ -922,6 +880,9 @@ paths:
                   type: string
                 name:
                   type: string
+                hospital_id:
+                  type: integer
+                  format: int64
                 department_id:
                   type: integer
                   format: int64
@@ -1109,5 +1070,3 @@ components:
           format: int64
         name:
           type: string
-        hospital:
-          $ref: '#/components/schemas/Hospital'
