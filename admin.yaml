@@ -729,11 +729,6 @@ paths:
           in: query
           schema:
             type: string
-        - name: manager_name_like
-          description: 维护者姓名模糊匹配
-          in: query
-          schema:
-            type: string
         - name: time_range_begin
           in: query
           schema:
