@@ -563,6 +563,41 @@ paths:
                     ]
                   msg:
                     type: string
+    delete:
+      description: 删除医院
+      operationId: DeleteHospital
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: hospitalID
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
   /api/v1/admin/departments:
     get:
       description: 科室列表
@@ -707,6 +742,41 @@ paths:
                     ]
                   msg:
                     type: string
+    delete:
+      description: 删除科室
+      operationId: DeleteDepartment
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: departmentID
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
   /api/v1/admin/accounts:
     get:
       description: 账号列表
@@ -726,6 +796,10 @@ paths:
             format: int64
         - name: phone_like
           description: 手机号码模糊匹配
+          in: query
+          schema:
+            type: string
+        - name: name_like
           in: query
           schema:
             type: string
