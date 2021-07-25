@@ -235,6 +235,9 @@ paths:
               properties:
                 device_code:
                   type: string
+                hospital_id:
+                  type: integer
+                  format: int64
                 department_id:
                   type: integer
                   format: int64
