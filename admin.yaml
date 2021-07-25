@@ -1093,10 +1093,10 @@ components:
           format: int64
         device_code:
           type: string
-        hospital_name:
-          type: string
-        department_name:
-          type: string
+        hospital:
+          $ref: '#/components/schemas/Hospital'
+        department:
+          $ref: '#/components/schemas/Department'
         sell_status:
           description: 1:未售出, 2:已售出
           type: integer
@@ -1109,6 +1109,22 @@ components:
         updated_at:
           type: integer
           format: int64
+    Hospital:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    Department:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
     DeviceSetting:
       type: object
       properties:
@@ -1130,20 +1146,4 @@ components:
           type: string
         password:
           description: 口令或密码
-          type: string
-    Hospital:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-    Department:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
           type: string
