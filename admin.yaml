@@ -158,6 +158,12 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/DeviceInfo'
+                      page:
+                        type: integer
+                        format: int64
+                      size:
+                        type: integer
+                        format: int64
     post:
       description: 添加设备
       operationId: AddDevice
@@ -434,6 +440,11 @@ paths:
       security:
         - bearerAuth: []
       parameters:
+        - name: name_like
+          description: 医院名称，模糊匹配
+          in: query
+          schema:
+            type: string
         - name: page
           description: 从0开始, 不传默认是0
           in: query
@@ -480,6 +491,12 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/Hospital'
+                      page:
+                        type: integer
+                        format: int64
+                      size:
+                        type: integer
+                        format: int64
     post:
       description: 添加医院
       operationId: AddHospital
@@ -613,6 +630,11 @@ paths:
       security:
         - bearerAuth: []
       parameters:
+        - name: name_like
+          description: 科室名称，模糊匹配
+          in: query
+          schema:
+            type: string
         - name: page
           description: 从0开始, 不传默认是0
           in: query
@@ -659,6 +681,12 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/Department'
+                      page:
+                        type: integer
+                        format: int64
+                      size:
+                        type: integer
+                        format: int64
     post:
       description: 新增科室
       operationId: AddDepartment
@@ -882,6 +910,12 @@ paths:
                             created_at:
                               type: integer
                               format: int64
+                      page:
+                        type: integer
+                        format: int64
+                      size:
+                        type: integer
+                        format: int64
     post:
       description: 添加账号
       operationId: AddAccount

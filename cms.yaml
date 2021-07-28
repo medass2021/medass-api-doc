@@ -192,6 +192,12 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/ReportInfo'
+                      page:
+                        type: integer
+                        format: int64
+                      size:
+                        type: integer
+                        format: int64
   /api/v1/cms/reports/{reportID}:
     get:
       description: 获取报告详情
@@ -372,6 +378,12 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/Doctor'
+                      page:
+                        type: integer
+                        format: int64
+                      size:
+                        type: integer
+                        format: int64
     post:
       description: 添加医生
       operationId: AddDoctor
