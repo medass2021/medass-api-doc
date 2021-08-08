@@ -274,6 +274,12 @@ paths:
                               请根据这个字段的枚举值从下面的5个字段中获取相应的报告详情
                             type: integer
                             format: int32
+                          device_code:
+                            description: 检测的设备号
+                            type: string
+                          conclusion:
+                            description: 诊断结果, type=3(内窥镜)时有值
+                            type: string
                           noninvasive_monitor:
                             # type=1 时有这个字段
                             $ref: '#/components/schemas/ReportNoninvasiveMonitor'
