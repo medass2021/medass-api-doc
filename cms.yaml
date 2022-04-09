@@ -666,6 +666,9 @@ components:
         id:
           type: integer
           format: int64
+        patient_id:
+          type: integer
+          format: int64
         patient_name:
           type: string
         type:
