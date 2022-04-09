@@ -775,6 +775,9 @@ components:
       properties:
         image_url:
           type: string
+        image_base64:
+          description: 图片用 base64 编码后的字符串，上传报告时需要这个字段
+          type: string
     ReportInfraredThermometer:
       type: object
       properties:

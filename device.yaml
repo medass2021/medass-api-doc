@@ -45,6 +45,51 @@ paths:
                     type: string
                   data:
                     $ref: '#/components/schemas/LoginResponse'
+  /api/v1/device/patients:
+    post:
+      description: 病人注册，如果已存在则直接返回已存在的病人id
+      operationId: PatientRegister
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              type: object
+              properties:
+                citizen_id:
+                  description: 身份证号
+                  type: string
+                name:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
   /api/v1/device/devices/{deviceCode}/setting:
     get:
       description: 获取配置
@@ -99,6 +144,9 @@ paths:
             schema:
               type: object
               properties:
+                patient_id:
+                  type: integer
+                  format: int64
                 type:
                   description: |
                     1:无创参数, 2:心电, 3:内窥镜, 4:B超, 5:红外测温\
@@ -286,6 +334,9 @@ components:
       type: object
       properties:
         image_url:
+          type: string
+        image_base64:
+          description: 图片用 base64 编码后的字符串，上传报告时需要这个字段
           type: string
     ReportInfraredThermometer:
       type: object
