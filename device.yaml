@@ -45,6 +45,36 @@ paths:
                     type: string
                   data:
                     $ref: '#/components/schemas/LoginResponse'
+  /api/v1/device/me:
+    get:
+      description: 获取自己的用户信息
+      operationId: Me
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Doctor'
   /api/v1/device/patients:
     post:
       description: 病人注册，如果已存在则直接返回已存在的病人id
@@ -220,6 +250,26 @@ components:
       properties:
         token:
           type: string
+    Doctor:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        doctor_code:
+          description: 医生工号
+          type: string
+        phone:
+          type: string
+        role:
+          description: 角色, 1:部门管理员, 2:普通医生
+          type: integer
+          format: int32
+        created_at:
+          type: integer
+          format: int64
     DeviceSetting:
       type: object
       properties:
@@ -337,6 +387,9 @@ components:
           type: string
         image_base64:
           description: 图片用 base64 编码后的字符串，上传报告时需要这个字段
+          type: string
+        image_extension:
+          description: 图片文件扩展名，比如 jpg/png 等，上传报告时需要这个字段
           type: string
     ReportInfraredThermometer:
       type: object

@@ -778,6 +778,9 @@ components:
         image_base64:
           description: 图片用 base64 编码后的字符串，上传报告时需要这个字段
           type: string
+        image_extension:
+          description: 图片文件扩展名，比如 jpg/png 等，上传报告时需要这个字段
+          type: string
     ReportInfraredThermometer:
       type: object
       properties:
