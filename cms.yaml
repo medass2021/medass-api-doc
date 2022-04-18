@@ -298,6 +298,54 @@ paths:
                           created_at:
                             type: integer
                             format: int64
+  /api/v1/cms/realtime/reports:
+    post:
+      description: 获取实时报告
+      operationId: GetRealtimeReport
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              type: object
+              properties:
+                patient_id:
+                  type: integer
+                  format: int64
+                type:
+                  description: 1:无创参数, 2:心电, 3:内窥镜, 4:B超, 5:红外测温
+                  type: integer
+                  format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      detail:
+                        type: string
   /api/v1/cms/patient_latest_report_id/{patientID}:
     get:
       description: 获取指定用户最新报告ID

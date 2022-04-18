@@ -232,6 +232,57 @@ paths:
                       id:
                         type: integer
                         format: int64
+  /api/v1/device/realtime/reports:
+    post:
+      description: 上传实时检测报告
+      operationId: AddRealtimeReport
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              type: object
+              properties:
+                patient_id:
+                  type: integer
+                  format: int64
+                type:
+                  description: 1:无创参数, 2:心电, 3:内窥镜, 4:B超, 5:红外测温
+                  type: integer
+                  format: int32
+                detail:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    description: |
+                      * 0: OK
+                      * 1000: 未登录
+                      * 1020: 未找到
+                      * 1500: 服务器错误
+                    enum: [
+                      0, # OK
+                      1000, # 未登录
+                      1020, # 未找到
+                      1500 # 服务器错误
+                    ]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
 components:
   securitySchemes:
     bearerAuth:
