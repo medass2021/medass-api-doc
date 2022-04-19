@@ -735,60 +735,46 @@ components:
       properties:
         blood_oxygen_saturation:
           description: 血氧饱和度
-          type: integer
-          format: int64
+          type: string
         blood_pressure:
           description: 血压
-          type: integer
-          format: int64
+          type: string
         mean_arterial_pressure:
           description: 平均动脉压
-          type: integer
-          format: int64
+          type: string
         peripheral_arterial_pulse:
           description: 外周脉搏
-          type: integer
-          format: int64
+          type: string
         cardiac_output:
           description: 心输出量
-          type: integer
-          format: int64
+          type: string
         stroke_volume:
           description: 心搏量
-          type: integer
-          format: int64
+          type: string
         alkaline_acidity:
           description: 碱酸度
-          type: integer
-          format: int64
+          type: string
         partial_pressure_of_carbon_dioxide:
           description: 二氧化碳分压
-          type: integer
-          format: int64
+          type: string
         oxygen_partial_pressure:
           description: 氧分压
-          type: integer
-          format: int64
+          type: string
         oxygen_content:
           description: 含氧量
-          type: integer
-          format: int64
+          type: string
         total_carbon_dioxide:
           description: 总二氧化碳量
-          type: integer
-          format: int64
+          type: string
         hemoglobin:
           description: 血红蛋白
-          type: integer
-          format: int64
+          type: string
         packed_cell_volume:
           description: 红细胞压积
-          type: integer
-          format: int64
+          type: string
         red_blood_cell:
           description: 红细胞
-          type: integer
-          format: int64
+          type: string
     ReportElectrocardiograph:
       type: object
       properties:
@@ -833,14 +819,10 @@ components:
       type: object
       properties:
         lowest_inside_temperature:
-          type: integer
-          format: int64
+          type: string
         highest_inside_temperature:
-          type: integer
-          format: int64
+          type: string
         lowest_outside_temperature:
-          type: integer
-          format: int64
+          type: string
         highest_outside_temperature:
-          type: integer
-          format: int64
+          type: string
